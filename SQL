@@ -1,0 +1,77 @@
+CREATE DATABASE pruebaitr;
+CREATE TABLE PERSONA (
+	ID_PERSONA bigint auto_increment,
+    ID_ESCUELA bigint,
+    DNI int unique,
+	EDAD int,
+	NOMBRE varchar(255) not null default 'Fran',
+	APELLIDO varchar(255),
+	FECHA_NACIMIENTO datetime default now(),
+    primary key (ID_PERSONA),
+    foreign key (ID_ESCUELA) references escuela(ID_ESCUELA)
+);
+CREATE TABLE persona(
+	ID_PERSONA bigint,
+    NOMBRE varchar(20),
+    FECHA_NACIMIENTO datetime
+);	
+CREATE TABLE escuela (
+	ID_ESCUELA bigint auto_increment,
+    NOMBRE varchar(200),
+    primary key (ID_ESCUELA)
+);
+CREATE TABLE relacion_persona_escuela (
+	ID_PERSONA bigint,
+    ID_ESCUELA bigint,
+	foreign key (ID_PERSONA) references persona(ID_PERSONA),
+	foreign key (ID_ESCUELA) references escuela(ID_ESCUELA)
+);
+DROP TABLE escuela;
+
+ALTER TABLE persona2 rename persona;
+ALTER TABLE persona ADD CIUDAD varchar(255);
+ALTER TABLE persona MODIFY CIUDAD varchar(200) default 'santa fe';
+ALTER TABLE persona DROP CIUDAD;
+ALTER TABLE persona MODIFY NOMBRE varchar(255) not null default 'fran';
+ALTER TABLE persona ADD ID_ESCUELA bigint;
+ALTER TABLE persona ADD foreign key (ID_ESCUELA) references escuela(ID_ESCUELA);
+ALTER TABLE persona ADD DNI int;
+CREATE UNIQUE INDEX IDX_PERSONA_DNI ON persona (DNI);
+show index from persona;
+
+INSERT:
+INSERT INTO persona values (2,'Lucas','1995-09-08'); (ingresar valores en orden de columnas)
+INSERT INTO persona(NOMBRE,FECHA_NACIMIENTO) values ('lucas','1995-09-08');
+
+SELECT:
+SELECT * FROM persona;
+SELECT per.ID_PERSONA, per.NOMBRE FROM persona per;
+SELECT * FROM persona where (ID_PERSONA=14 and NOMBRE='FRANCISCO FLORENTIN') or (ID_PERSONA=4);
+SELECT * FROM persona where ID_EMPRESA is not null;
+SELECT * FROM persona where ID_PERSONA not in (1,5); 
+SELECT * FROM persona where ID_PERSONA between 1 and 5;
+SELECT * FROM persona where NOMBRE like 'f%';  (empieza con f)
+SELECT * FROM persona where NOMBRE like 'f%tin'; (empieza con f y termina con tin)
+SELECT * FROM persona order by ID_PERSONA desc;
+SELECT * FROM persona order by FECHA_NACIMIENTO,ID_PERSONA desc ; (ordena primero por el primer valor y si es igual ordena por segundo valor)
+SELECT distinct NOMBRE FROM persona;
+SELECT NOMBRE FROM persona;
+
+DELETE FROM persona where NOMBRE='lucas';
+
+UPDATE persona SET FECHA_NACIMIENTO='2000-01-03',ID_EMPRESA=4 WHERE ID_PERSONA>17;
+
+SELECT * FROM persona per inner join empresa em on per.ID_EMPRESA=em.ID_EMPRESA; 
+SELECT NOMBRE,em.ID_EMPRESA FROM persona per INNER JOIN empresa em ON per.ID_EMPRESA=em.ID_EMPRESA; 
+
+IMPORTANTE ANTI DESPIDOS!!!!
+	SET AUTOCOMMIT=false;
+	START TRANSACTION;
+	DELETE FROM persona;
+	SELECT * FROM persona;
+	ROLLBACK o COMMIT (con rollback anulo todo desde el "START TRANSACTION" con COMMIT aplico los cambios)
+	
+	
+SELECT * FROM persona per right join empresa em on (em.ID_EMPRESA=per.ID_EMPRESA)
+ORDER BY per.ID_PERSONA                      
+(Trae los valores nulos de los campos de la condicion de la tabla de la derecha, en este caso de empresa)
